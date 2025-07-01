@@ -561,18 +561,34 @@
     }
 
     /* Plan Details */
-    .plan-details { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-    .plan-details.active { opacity: 1; visibility: visible; }
-
+    .plan-details {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.4s;
+      overflow-y: auto;
+    }
+    .plan-details.active {
+      opacity: 1;
+      visibility: visible;
+    }
     .plan-details-container {
-      max-width: 1000px;
-      width: 90%;
+      transform: translateY(40px) scale(0.98);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s;
       max-height: 90vh;
       overflow-y: auto;
-      background: var(--gradient-card);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      padding: 3rem 2rem;
+    }
+    .plan-details.active .plan-details-container {
+      transform: translateY(0) scale(1);
+      opacity: 1;
     }
 
     .plan-details-content h3 {
@@ -678,13 +694,22 @@
 
     .about-image img {
       width: 100%;
+      max-width: 400px;
+      height: auto;
       border-radius: var(--radius);
-      filter: drop-shadow(var(--shadow-medium));
-      transition: var(--transition-smooth);
+      border: 4px solid;
+      border-image: linear-gradient(135deg, #e0b300 0%, #fff 100%);
+      border-image-slice: 1;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s, filter 0.5s;
+      background: transparent;
+      box-shadow: 0 8px 40px 0 rgba(224,179,0,0.08), 0 2px 8px 0 rgba(255,255,255,0.04);
+      filter: none;
     }
 
-    .about-image:hover img {
-      transform: scale(1.05);
+    .about-image img:hover {
+      transform: scale(1.07) rotate(-2deg);
+      box-shadow: 0 16px 64px 0 rgba(224,179,0,0.12), 0 4px 16px 0 rgba(255,255,255,0.08);
+      filter: none;
     }
 
     /* Testimonials Section */
@@ -891,6 +916,105 @@
       color: transparent;
       /* Mantiene tamaño y tipografía heredados */
     }
+
+    /* Menú hamburguesa y menú móvil */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 2001;
+      margin-left: 1rem;
+    }
+    .hamburger span {
+      display: block;
+      width: 28px;
+      height: 4px;
+      margin: 4px 0;
+      background: var(--color-text);
+      border-radius: 2px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 80vw;
+      max-width: 320px;
+      height: 100vh;
+      background: var(--color-bg-card);
+      box-shadow: -4px 0 32px rgba(0,0,0,0.4);
+      z-index: 2000;
+      padding: 4rem 2rem 2rem 2rem;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: translateX(100%);
+    }
+    .mobile-menu.active {
+      display: block;
+      transform: translateX(0);
+    }
+    .mobile-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .mobile-menu ul li a {
+      color: var(--color-text);
+      font-size: 1.2rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    .mobile-menu ul li a:hover {
+      color: var(--color-accent);
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .hamburger {
+        display: flex !important;
+      }
+      .mobile-menu {
+        display: block;
+      }
+    }
+
+    .plan-badge-popular {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #e53935;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.3em 1.1em;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(229,57,53,0.15);
+      letter-spacing: 1px;
+      z-index: 10;
+      text-transform: uppercase;
+      border: 2px solid #fff2;
+    }
   </style>
 </head>
 <body>
@@ -916,6 +1040,23 @@
     <div class="nav-content">
       <a href="#home" class="logo">Naiche Hurtado</a>
       <ul class="nav-links">
+        <li><a href="#home">Inicio</a></li>
+        <li><a href="#stats">Experiencia</a></li>
+        <li><a href="#plans">Planes</a></li>
+        <li><a href="#about">Sobre mí</a></li>
+        <li><a href="#testimonials">Testimonios</a></li>
+        <li><a href="#why-work-with-me">¿Por qué trabajar conmigo?</a></li>
+      </ul>
+      <!-- Botón hamburguesa para móvil -->
+      <button class="hamburger" id="hamburger-menu" aria-label="Abrir menú" style="display:none;">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <!-- Menú móvil desplegable -->
+    <div class="mobile-menu" id="mobile-menu">
+      <ul>
         <li><a href="#home">Inicio</a></li>
         <li><a href="#stats">Experiencia</a></li>
         <li><a href="#plans">Planes</a></li>
@@ -981,23 +1122,26 @@
         <button class="btn-info" data-toggle="monthly-extra-info">Más información</button>
       </div>
       
-      <div class="plan-card animate-on-scroll">
-        <div class="plan-header">
-          <h3>Asesoría Trimestral</h3>
-          <div class="price">160€</div>
-          <div class="price-period">3 meses</div>
+      <div class="plan-card-group animate-on-scroll" style="position: relative;">
+        <span class="plan-badge-popular">Popular</span>
+        <div class="plan-card animate-on-scroll">
+          <div class="plan-header">
+            <h3>Asesoría Trimestral</h3>
+            <div class="price">160€</div>
+            <div class="price-period">3 meses</div>
+          </div>
+          <div class="plan-description" style="margin-bottom: 1rem;">
+            Estrategia de 12 semanas diseñada para optimizar resultados a medio plazo. Adaptaciones periódicas en base a tu evolución y soporte constante para maximizar tu rendimiento y bienestar.
+          </div>
+          <ul class="plan-features">
+            <li>Plan entrenamiento + nutrición (3 fases)</li>
+            <li>Revisiones quincenales</li>
+            <li>Feedback personalizado</li>
+            <li>Material educativo exclusivo</li>
+          </ul>
+          <button class="btn-plan" onclick="window.open('https://buy.stripe.com/5kQaEW9mb587fD68d6bwk01', '_blank')">Contratar ahora</button>
+          <button class="btn-info" data-toggle="quarterly-info">Más información</button>
         </div>
-        <div class="plan-description" style="margin-bottom: 1rem;">
-          Estrategia de 12 semanas diseñada para optimizar resultados a medio plazo. Adaptaciones periódicas en base a tu evolución y soporte constante para maximizar tu rendimiento y bienestar.
-        </div>
-        <ul class="plan-features">
-          <li>Plan entrenamiento + nutrición (3 fases)</li>
-          <li>Revisiones quincenales</li>
-          <li>Feedback personalizado</li>
-          <li>Material educativo exclusivo</li>
-        </ul>
-        <button class="btn-plan" onclick="window.open('https://buy.stripe.com/5kQaEW9mb587fD68d6bwk01', '_blank')">Contratar ahora</button>
-        <button class="btn-info" data-toggle="quarterly-info">Más información</button>
       </div>
       
       <div class="plan-card animate-on-scroll">
@@ -1023,7 +1167,7 @@
 
   <!-- Plan Details Sections -->
   <section class="plan-details" id="monthly-extra-info" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--gradient-card);padding:4rem 1rem;">
-    <div class="plan-details-container animate-on-scroll" style="max-width:700px;background:var(--color-bg-card);border-radius:var(--radius);box-shadow:var(--shadow-medium);padding:3rem 2rem;">
+    <div class="plan-details-container" style="max-width:700px;background:var(--color-bg-card);border-radius:var(--radius);box-shadow:var(--shadow-medium);padding:3rem 2rem;">
       <h2 style="font-size:2.2rem;margin-bottom:1.5rem;text-align:center;">Asesoría Mensual: Transforma tu Estilo de Vida</h2>
       <p style="font-size:1.15rem;margin-bottom:2rem;text-align:center;">Transforma tu estilo de vida con una guía profesional, cercana y adaptada a tus objetivos. Esta asesoría mensual está diseñada para ayudarte a alcanzar resultados reales y sostenibles, combinando nutrición inteligente y entrenamiento efectivo.</p>
       <h3 style="margin-bottom:1rem;">¿Qué incluye?</h3>
@@ -1042,7 +1186,7 @@
   </section>
 
   <section class="plan-details" id="quarterly-info" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--gradient-card);padding:4rem 1rem;">
-    <div class="plan-details-container animate-on-scroll" style="max-width:700px;background:var(--color-bg-card);border-radius:var(--radius);box-shadow:var(--shadow-medium);padding:3rem 2rem;">
+    <div class="plan-details-container" style="max-width:700px;background:var(--color-bg-card);border-radius:var(--radius);box-shadow:var(--shadow-medium);padding:3rem 2rem;">
       <h2 style="font-size:2.2rem;margin-bottom:1.5rem;text-align:center;">Asesoría Trimestral: Optimiza tus Resultados</h2>
       <p style="font-size:1.15rem;margin-bottom:2rem;text-align:center;">Estrategia de 12 semanas diseñada para optimizar resultados a medio plazo. Adaptaciones periódicas en base a tu evolución y soporte constante para maximizar tu rendimiento y bienestar.</p>
       <h3 style="margin-bottom:1rem;">¿Qué incluye?</h3>
@@ -1060,7 +1204,7 @@
   </section>
 
   <section class="plan-details" id="semester-info" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--gradient-card);padding:4rem 1rem;">
-    <div class="plan-details-container animate-on-scroll" style="max-width:700px;background:var(--color-bg-card);border-radius:var(--radius);box-shadow:var(--shadow-medium);padding:3rem 2rem;">
+    <div class="plan-details-container" style="max-width:700px;background:var(--color-bg-card);border-radius:var(--radius);box-shadow:var(--shadow-medium);padding:3rem 2rem;">
       <h2 style="font-size:2.2rem;margin-bottom:1.5rem;text-align:center;">Asesoría Semestral: Transformación Total</h2>
       <p style="font-size:1.15rem;margin-bottom:2rem;text-align:center;">Planificación integral de 6 meses, ideal para objetivos ambiciosos o sostenidos. Progresión estructurada, revisiones constantes y soporte completo para una transformación sólida y duradera.</p>
       <h3 style="margin-bottom:1rem;">¿Qué incluye?</h3>
@@ -1095,7 +1239,7 @@
         </p>
       </div>
       <div class="about-image animate-on-scroll">
-        <img src="IMG_3920.png" alt="Naiche Hurtado - Preparador Físico" />
+        <img src="naiche.png" alt="Naiche Hurtado - Preparador Físico" style="max-width: 100%; height: auto; display: block; margin: 0 auto; background: transparent;" />
       </div>
     </div>
   </section>
@@ -1103,25 +1247,25 @@
   <!-- Por qué trabajar conmigo Section -->
   <section class="why-work-with-me animate-on-scroll" id="why-work-with-me" style="padding: 5rem 2rem; background: var(--color-bg-alt); border-radius: var(--radius); margin: 4rem auto; max-width: 1100px; box-shadow: var(--shadow-medium);">
     <h2 class="section-title" style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">¿Por qué trabajar conmigo?</h2>
-    <p style="text-align: center; font-size: 1.2rem; max-width: 700px; margin: 0 auto 3rem auto; color: var(--color-text-muted);">
+    <p style="text-align: justify; font-size: 1.2rem; max-width: 700px; margin: 0 auto 3rem auto; color: var(--color-text-muted);">
       Trabajar conmigo no significa seguir una rutina genérica: significa tener un plan personalizado diseñado exclusivamente para ti, adaptado a tus metas, necesidades y estilo de vida. Ya sea que busques perder peso, ganar músculo, mejorar tu rendimiento o simplemente sentirte más saludable, diseñaré un programa que funcione específicamente para ti, sin importar dónde te encuentres.
     </p>
     <div class="why-cards" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
       <div class="why-card" style="flex: 1 1 250px; min-width: 250px; max-width: 320px; background: var(--color-bg-card); border-radius: var(--radius-small); box-shadow: var(--shadow-soft); padding: 2rem 1.5rem; text-align: center; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;">
         <h3 style="margin-bottom: 0.5rem;">Plan 100% Personalizado</h3>
-        <p style="color: var(--color-text-muted);">Cada detalle de tu programa se adapta a tus objetivos, historial y preferencias. Nada de plantillas, todo hecho para ti.</p>
+        <p style="color: var(--color-text-muted); text-align: justify;">Cada detalle de tu programa se adapta a tus objetivos, historial y preferencias. Nada de plantillas, todo hecho para ti.</p>
       </div>
       <div class="why-card" style="flex: 1 1 250px; min-width: 250px; max-width: 320px; background: var(--color-bg-card); border-radius: var(--radius-small); box-shadow: var(--shadow-soft); padding: 2rem 1.5rem; text-align: center; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;">
         <h3 style="margin-bottom: 0.5rem;">Seguimiento y Ajustes Constantes</h3>
-        <p style="color: var(--color-text-muted);">Revisiones semanales y ajustes en tiempo real para que siempre avances, sin estancarte ni perder motivación.</p>
+        <p style="color: var(--color-text-muted); text-align: justify;">Revisiones semanales y ajustes en tiempo real para que siempre avances, sin estancarte ni perder motivación.</p>
       </div>
       <div class="why-card" style="flex: 1 1 250px; min-width: 250px; max-width: 320px; background: var(--color-bg-card); border-radius: var(--radius-small); box-shadow: var(--shadow-soft); padding: 2rem 1.5rem; text-align: center; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;">
         <h3 style="margin-bottom: 0.5rem;">Entrena desde cualquier lugar</h3>
-        <p style="color: var(--color-text-muted);">No importa si entrenas en casa, gimnasio o al aire libre: tu plan se adapta a tu entorno y recursos disponibles.</p>
+        <p style="color: var(--color-text-muted); text-align: justify;">No importa si entrenas en casa, gimnasio o al aire libre: tu plan se adapta a tu entorno y recursos disponibles.</p>
       </div>
       <div class="why-card" style="flex: 1 1 250px; min-width: 250px; max-width: 320px; background: var(--color-bg-card); border-radius: var(--radius-small); box-shadow: var(--shadow-soft); padding: 2rem 1.5rem; text-align: center; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;">
         <h3 style="margin-bottom: 0.5rem;">Soporte y motivación real</h3>
-        <p style="color: var(--color-text-muted);">Acompañamiento cercano, comunicación directa y motivación constante para que nunca te sientas solo en el proceso.</p>
+        <p style="color: var(--color-text-muted); text-align: justify;">Acompañamiento cercano, comunicación directa y motivación constante para que nunca te sientas solo en el proceso.</p>
       </div>
     </div>
     <script>
@@ -1713,6 +1857,25 @@
             plansSection.scrollIntoView({ behavior: 'smooth' });
           }, 200);
         }
+      });
+    }
+
+    // Menú hamburguesa para móvil
+    const hamburger = document.getElementById('hamburger-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+      });
+      // Cerrar menú al hacer clic en un enlace
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          hamburger.classList.remove('active');
+          mobileMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        });
       });
     }
   </script>

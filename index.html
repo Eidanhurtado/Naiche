@@ -157,7 +157,15 @@
       justify-content: center;
       padding: 8rem 2rem 4rem;
       position: relative;
-      background: var(--gradient-primary);
+      /* Fondo animado optimizado */
+      background: linear-gradient(120deg, #1a1a1a 0%, #232a34 50%, #0f0f0f 100%);
+      background-size: 200% 200%;
+      animation: heroGradientMove 8s ease-in-out infinite;
+    }
+    @keyframes heroGradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .hero::before {
@@ -865,6 +873,11 @@
       transform: translateY(0);
     }
 
+    /* Animación de entrada más lenta solo para Podcast */
+    .podcast-section.animate-on-scroll {
+      transition: all 2.2s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
     /* Loading Animation */
     .loading {
       position: fixed;
@@ -1015,6 +1028,80 @@
       text-transform: uppercase;
       border: 2px solid #fff2;
     }
+
+    /* Hero Waves (SVG) */
+    .hero-waves {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-waves svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .wave1 {
+      /* La animación se hará por JS */
+    }
+    .wave2 {
+      opacity: 0.7;
+    }
+
+    /* Animación de entrada para el slider interactivo */
+    .hybrid-slider-animate {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1s cubic-bezier(0.25,0.46,0.45,0.94), transform 1s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .hybrid-slider-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Efecto estático de resplandor animado para el slider */
+    .slider-glow {
+      box-shadow: 0 0 0 0 #ffd700, 0 0 12px 2px #e0b300;
+      transition: box-shadow 0.3s;
+      animation: sliderGlowPulse 1.5s infinite alternate;
+      outline: none;
+    }
+    @keyframes sliderGlowPulse {
+      0% { box-shadow: 0 0 0 0 #ffd700, 0 0 12px 2px #e0b300; }
+      100% { box-shadow: 0 0 0 4px #ffd70088, 0 0 24px 6px #e0b300cc; }
+    }
+
+    /* Podcast Section */
+    .podcast-section {
+      position: relative;
+      z-index: 2;
+    }
+    .podcast-card {
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.25s;
+    }
+    .podcast-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: var(--shadow-medium);
+    }
+    .podcast-thumb img {
+      transition: filter 0.3s;
+    }
+    .podcast-card:hover .podcast-thumb img {
+      filter: brightness(1.05) saturate(1.2);
+    }
+    .podcast-play {
+      transition: background 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 12px #ffd70044;
+    }
+    .podcast-card:hover .podcast-play {
+      background: #ffd700;
+      box-shadow: 0 4px 24px #ffd70088;
+    }
   </style>
 </head>
 <body>
@@ -1023,7 +1110,7 @@
     <div class="loader"></div>
   </div>
 
-  <!-- Animated Background Mejorado -->
+  <!-- Animated Background Mejorado SOLO en Hero -->
   <div class="bg-animation">
     <canvas id="particles-bg" style="position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:-2;"></canvas>
     <div class="floating-shapes">
@@ -1043,9 +1130,10 @@
         <li><a href="#home">Inicio</a></li>
         <li><a href="#stats">Experiencia</a></li>
         <li><a href="#plans">Planes</a></li>
+        <li><a href="#podcast">Podcast</a></li>
         <li><a href="#about">Sobre mí</a></li>
-        <li><a href="#testimonials">Testimonios</a></li>
         <li><a href="#why-work-with-me">¿Por qué trabajar conmigo?</a></li>
+        <li><a href="#testimonials">Testimonios</a></li>
       </ul>
       <!-- Botón hamburguesa para móvil -->
       <button class="hamburger" id="hamburger-menu" aria-label="Abrir menú" style="display:none;">
@@ -1060,24 +1148,32 @@
         <li><a href="#home">Inicio</a></li>
         <li><a href="#stats">Experiencia</a></li>
         <li><a href="#plans">Planes</a></li>
+        <li><a href="#podcast">Podcast</a></li>
         <li><a href="#about">Sobre mí</a></li>
-        <li><a href="#testimonials">Testimonios</a></li>
         <li><a href="#why-work-with-me">¿Por qué trabajar conmigo?</a></li>
+        <li><a href="#testimonials">Testimonios</a></li>
       </ul>
     </div>
   </nav>
 
   <!-- Hero Section -->
   <section class="hero" id="home" style="position:relative;overflow:hidden;">
-    <canvas id="space-bg" style="position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:0;"></canvas>
+    <!-- Fondo animado reemplazado: se elimina el canvas -->
     <div class="hero-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 80vh;">
       <div class="hero-text" style="max-width: 700px; width: 100%;">
         <h1 class="neon-title" style="text-align: center;">Alcanza tu mejor versión</h1>
         <div class="cta-buttons" style="justify-content: center;">
           <button class="btn-primary" data-scroll="#plans">Empieza ahora</button>
-          <button class="btn-secondary" data-scroll="#about">Conoce más</button>
+          <button class="btn-secondary" data-scroll="#podcast">Conoce más</button>
         </div>
       </div>
+    </div>
+    <!-- SVG de olas animadas -->
+    <div class="hero-waves">
+      <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;height:100px;display:block;position:absolute;bottom:0;left:0;z-index:1;">
+        <path class="wave1" d="M0 60 Q 360 120 720 60 T 1440 60 V120 H0Z" fill="#232a34"/>
+        <path class="wave2" d="M0 80 Q 360 40 720 80 T 1440 80 V120 H0Z" fill="#1a1a1a"/>
+      </svg>
     </div>
   </section>
 
@@ -1221,6 +1317,39 @@
     </div>
   </section>
 
+  
+
+  <!-- Podcast Section -->
+  <section class="podcast-section animate-on-scroll" id="podcast" style="padding:6rem 2rem 4rem 2rem;background:var(--color-bg-alt);border-top:1px solid var(--color-border);">
+    <div class="podcast-container" style="max-width:1200px;margin:0 auto;">
+      <h2 class="section-title" style="text-align:center;margin-bottom:0.7rem;">Podcast</h2>
+      <div style="max-width:700px;margin:0 auto 2.2rem auto;text-align:center;color:#a0a0a0;font-size:1.15rem;line-height:1.6;">Accede a ver el Podcast de Naiche</div>
+      <div class="podcast-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;">
+        <a class="podcast-card" href="https://youtu.be/2m99pnyAH4g" target="_blank" rel="noopener" style="background:var(--gradient-card);border-radius:var(--radius);box-shadow:var(--shadow-soft);padding:1.5rem 1rem;display:flex;flex-direction:column;align-items:center;transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden;text-decoration:none;">
+          <div class="podcast-thumb" style="width:100%;max-width:320px;aspect-ratio:16/9;background:#111;border-radius:var(--radius-small);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.12);margin-bottom:1.2rem;position:relative;">
+            <img src="https://img.youtube.com/vi/2m99pnyAH4g/hqdefault.jpg" alt="Podcast 1" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.92);transition:filter 0.3s;">
+            <span class="podcast-play" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);border-radius:50%;padding:0.7em;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#ffd700"/><polygon points="13,10 24,16 13,22" fill="#232a34"/></svg></span>
+          </div>
+          <div style="color:#fff;font-size:1.15rem;font-weight:600;text-align:center;">Podcast #1</div>
+        </a>
+        <a class="podcast-card" href="https://youtu.be/u67tXAufYbU" target="_blank" rel="noopener" style="background:var(--gradient-card);border-radius:var(--radius);box-shadow:var(--shadow-soft);padding:1.5rem 1rem;display:flex;flex-direction:column;align-items:center;transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden;text-decoration:none;">
+          <div class="podcast-thumb" style="width:100%;max-width:320px;aspect-ratio:16/9;background:#111;border-radius:var(--radius-small);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.12);margin-bottom:1.2rem;position:relative;">
+            <img src="https://img.youtube.com/vi/u67tXAufYbU/hqdefault.jpg" alt="Podcast 2" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.92);transition:filter 0.3s;">
+            <span class="podcast-play" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);border-radius:50%;padding:0.7em;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#ffd700"/><polygon points="13,10 24,16 13,22" fill="#232a34"/></svg></span>
+          </div>
+          <div style="color:#fff;font-size:1.15rem;font-weight:600;text-align:center;">Podcast #2</div>
+        </a>
+        <a class="podcast-card" href="https://youtu.be/gjFop-5WPOs" target="_blank" rel="noopener" style="background:var(--gradient-card);border-radius:var(--radius);box-shadow:var(--shadow-soft);padding:1.5rem 1rem;display:flex;flex-direction:column;align-items:center;transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden;text-decoration:none;">
+          <div class="podcast-thumb" style="width:100%;max-width:320px;aspect-ratio:16/9;background:#111;border-radius:var(--radius-small);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.12);margin-bottom:1.2rem;position:relative;">
+            <img src="https://img.youtube.com/vi/gjFop-5WPOs/hqdefault.jpg" alt="Podcast 3" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.92);transition:filter 0.3s;">
+            <span class="podcast-play" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);border-radius:50%;padding:0.7em;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#ffd700"/><polygon points="13,10 24,16 13,22" fill="#232a34"/></svg></span>
+          </div>
+          <div style="color:#fff;font-size:1.15rem;font-weight:600;text-align:center;">Podcast #3</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- About Section -->
   <section class="about" id="about">
     <div class="about-container">
@@ -1239,13 +1368,25 @@
         </p>
       </div>
       <div class="about-image animate-on-scroll">
-        <img src="naiche.png" alt="Naiche Hurtado - Preparador Físico" style="max-width: 100%; height: auto; display: block; margin: 0 auto; background: transparent;" />
+        <!-- Elemento interactivo: Slider Fuerza/Resistencia -->
+        <div class="hybrid-slider-container hybrid-slider-animate" style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:320px;margin:0 auto;">
+          <div class="slider-invite" style="margin-bottom:0.2rem;font-size:1.08rem;color:#ffd700;font-weight:600;letter-spacing:0.5px;">¡Interactúa con la barra!</div>
+          <div style="width:100%;display:flex;justify-content:space-between;font-weight:600;font-size:1.05rem;color:#e0b300;">
+            <span>Fuerza</span>
+            <span style="color:#00b3e6;">Resistencia</span>
+          </div>
+          <input type="range" min="0" max="100" value="50" id="hybridSlider" class="slider-glow" style="width:100%;accent-color:#e0b300;">
+          <div id="hybridSVGWrapper" style="width:160px;height:160px;display:flex;align-items:center;justify-content:center;">
+            <!-- SVG dinámico aquí -->
+          </div>
+          <div id="hybridMessage" style="margin-top:0.5rem;color:#ffd700;font-size:1.05rem;text-align:center;min-height:32px;">¡El equilibrio es la clave para tu mejor versión!</div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Por qué trabajar conmigo Section -->
-  <section class="why-work-with-me animate-on-scroll" id="why-work-with-me" style="padding: 5rem 2rem; background: var(--color-bg-alt); border-radius: var(--radius); margin: 4rem auto; max-width: 1100px; box-shadow: var(--shadow-medium);">
+  <section class="why-work-with-me animate-on-scroll" id="why-work-with-me" style="padding: 5rem 2rem; background: #181818; border-radius: 0; margin: 4rem auto; max-width: 1100px; box-shadow: none;">
     <h2 class="section-title" style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">¿Por qué trabajar conmigo?</h2>
     <p style="text-align: justify; font-size: 1.2rem; max-width: 700px; margin: 0 auto 3rem auto; color: var(--color-text-muted);">
       Trabajar conmigo no significa seguir una rutina genérica: significa tener un plan personalizado diseñado exclusivamente para ti, adaptado a tus metas, necesidades y estilo de vida. Ya sea que busques perder peso, ganar músculo, mejorar tu rendimiento o simplemente sentirte más saludable, diseñaré un programa que funcione específicamente para ti, sin importar dónde te encuentres.
@@ -1301,7 +1442,6 @@
             <div class="rating">★★★★★</div>
           </div>
         </div>
-
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-content">
             <div class="quote-icon">"</div>
@@ -1315,7 +1455,6 @@
             <div class="rating">★★★★★</div>
           </div>
         </div>
-
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-content">
             <div class="quote-icon">"</div>
@@ -1329,7 +1468,6 @@
             <div class="rating">★★★★★</div>
           </div>
         </div>
-
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-content">
             <div class="quote-icon">"</div>
@@ -1343,7 +1481,6 @@
             <div class="rating">★★★★★</div>
           </div>
         </div>
-
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-content">
             <div class="quote-icon">"</div>
@@ -1357,7 +1494,6 @@
             <div class="rating">★★★★★</div>
           </div>
         </div>
-
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-content">
             <div class="quote-icon">"</div>
@@ -1382,9 +1518,11 @@
     </div>
   </footer>
 
+  <div id="descubre-mas" style="height:1px;"></div>
+
   <script>
     // Loading Screen
-    window.addEventListener('load', () => {
+    window.addEventListener('load', () => { 
       setTimeout(() => {
         document.getElementById('loading').classList.add('hidden');
       }, 1000);
@@ -1571,15 +1709,19 @@
     `;
     document.head.appendChild(style);
 
-    // Fondo animado de partículas para el fondo general
+    // Fondo animado de partículas SOLO en Hero
     (function() {
-      const canvas = document.getElementById('particles-bg');
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+      const canvas = hero.querySelector('#particles-bg');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      let width = window.innerWidth;
-      let height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
+      function resizeCanvas() {
+        canvas.width = hero.offsetWidth;
+        canvas.height = hero.offsetHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
       const PARTICLE_COUNT = 22;
       const THREAD_COUNT = 6;
       const particles = [];
@@ -1587,20 +1729,19 @@
       const colors = ['#e0b300', '#fff', '#a0a0a0', '#666666'];
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
           r: Math.random() * 1.2 + 0.8,
           dx: ((Math.random() - 0.5) * 0.5) * 2.5,
           dy: ((Math.random() - 0.5) * 0.5) * 2.5,
           color: colors[Math.floor(Math.random() * colors.length)]
         });
       }
-      // Hilos animados (curvas)
       for (let i = 0; i < THREAD_COUNT; i++) {
         threads.push({
           points: Array.from({length: 5}, () => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
             dx: (Math.random() - 0.5) * 1.2,
             dy: (Math.random() - 0.5) * 1.2
           })),
@@ -1609,13 +1750,13 @@
         });
       }
       function draw() {
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         // Gradiente de fondo
-        const grad = ctx.createLinearGradient(0, 0, width, height);
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
         grad.addColorStop(0, '#1a1a1a');
         grad.addColorStop(1, '#0f0f0f');
         ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         // Hilos animados
         threads.forEach(thread => {
           ctx.save();
@@ -1666,28 +1807,22 @@
         for (const p of particles) {
           p.x += p.dx;
           p.y += p.dy;
-          if (p.x < 0 || p.x > width) p.dx *= -1;
-          if (p.y < 0 || p.y > height) p.dy *= -1;
+          if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
         }
         // Mover hilos
         threads.forEach(thread => {
           thread.points.forEach(pt => {
             pt.x += pt.dx;
             pt.y += pt.dy;
-            if (pt.x < 0 || pt.x > width) pt.dx *= -1;
-            if (pt.y < 0 || pt.y > height) pt.dy *= -1;
+            if (pt.x < 0 || pt.x > canvas.width) pt.dx *= -1;
+            if (pt.y < 0 || pt.y > canvas.height) pt.dy *= -1;
           });
         });
         draw();
         requestAnimationFrame(animate);
       }
       animate();
-      window.addEventListener('resize', () => {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-      });
     })();
 
     // Fondo animado de estrellas para la sección hero
@@ -1878,6 +2013,160 @@
         });
       });
     }
+
+    // --- Animación de olas en la sección hero ---
+    (function() {
+      const wave1 = document.querySelector('.hero-waves .wave1');
+      const wave2 = document.querySelector('.hero-waves .wave2');
+      if (!wave1 || !wave2) return;
+      let t = 0;
+      function animateWaves() {
+        t += 0.02;
+        // Onda 1
+        const amp1 = 20;
+        const y1 = 60 + Math.sin(t) * amp1;
+        const y2 = 60 + Math.cos(t + 1) * amp1 * 0.5;
+        const y3 = 60 + Math.sin(t + 2) * amp1;
+        wave1.setAttribute('d', `M0 60 Q 360 ${y1} 720 ${y2} T 1440 ${y3} V120 H0Z`);
+        // Onda 2
+        const amp2 = 18;
+        const y1b = 80 + Math.cos(t + 1.5) * amp2;
+        const y2b = 80 + Math.sin(t + 2.5) * amp2 * 0.6;
+        const y3b = 80 + Math.cos(t + 3.5) * amp2;
+        wave2.setAttribute('d', `M0 80 Q 360 ${y1b} 720 ${y2b} T 1440 ${y3b} V120 H0Z`);
+        requestAnimationFrame(animateWaves);
+      }
+      animateWaves();
+    })();
+
+    // Medidor interactivo de perfil híbrido (fuerza y resistencia)
+    (function() {
+      const forceArc = document.getElementById('forceArc');
+      const enduranceArc = document.getElementById('enduranceArc');
+      if (!forceArc || !enduranceArc) return;
+      // Valores de ejemplo: Fuerza 70%, Resistencia 85%
+      const forcePercent = 0.7;
+      const endurancePercent = 0.85;
+      const circumference = 2 * Math.PI * 90;
+      // Animación
+      let progress = 0;
+      function animateMeter() {
+        progress += 0.03;
+        const forceVal = Math.min(forcePercent, progress);
+        const enduranceVal = Math.min(endurancePercent, progress);
+        forceArc.setAttribute('stroke-dasharray', circumference);
+        forceArc.setAttribute('stroke-dashoffset', circumference * (1 - forceVal));
+        forceArc.setAttribute('transform', 'rotate(-90 110 110)');
+        enduranceArc.setAttribute('stroke-dasharray', circumference);
+        enduranceArc.setAttribute('stroke-dashoffset', circumference * (1 - enduranceVal));
+        enduranceArc.setAttribute('transform', 'rotate(90 110 110)');
+        if (progress < Math.max(forcePercent, endurancePercent)) {
+          requestAnimationFrame(animateMeter);
+        }
+      }
+      animateMeter();
+      // Interactividad: resalta al pasar el mouse
+      forceArc.addEventListener('mouseenter', () => {
+        forceArc.setAttribute('stroke', '#ffd700');
+      });
+      forceArc.addEventListener('mouseleave', () => {
+        forceArc.setAttribute('stroke', '#e0b300');
+      });
+      enduranceArc.addEventListener('mouseenter', () => {
+        enduranceArc.setAttribute('stroke', '#00e6b3');
+      });
+      enduranceArc.addEventListener('mouseleave', () => {
+        enduranceArc.setAttribute('stroke', '#00b3e6');
+      });
+    })();
+
+    // Slider interactivo Fuerza/Resistencia en Sobre mí
+    (function() {
+      const slider = document.getElementById('hybridSlider');
+      const svgWrapper = document.getElementById('hybridSVGWrapper');
+      const message = document.getElementById('hybridMessage');
+      if (!slider || !svgWrapper || !message) return;
+      // SVGs para los extremos y el intermedio
+      function getSVG(val) {
+        // val: 0 (fuerza) ... 100 (resistencia)
+        if (val < 33) {
+          // Fuerza: musculoso
+          return `<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="60" rx="56" ry="56" fill="#232a34"/>
+            <ellipse cx="60" cy="60" rx="40" ry="40" fill="#e0b300" fill-opacity="0.18"/>
+            <rect x="40" y="70" width="40" height="18" rx="9" fill="#e0b300"/>
+            <ellipse cx="60" cy="60" rx="18" ry="24" fill="#fff"/>
+            <ellipse cx="60" cy="60" rx="12" ry="16" fill="#e0b300"/>
+            <rect x="32" y="52" width="16" height="16" rx="8" fill="#e0b300"/>
+            <rect x="72" y="52" width="16" height="16" rx="8" fill="#e0b300"/>
+            <rect x="24" y="80" width="16" height="8" rx="4" fill="#e0b300"/>
+            <rect x="80" y="80" width="16" height="8" rx="4" fill="#e0b300"/>
+          </svg>`;
+        } else if (val > 66) {
+          // Resistencia: runner
+          return `<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="60" rx="56" ry="56" fill="#232a34"/>
+            <ellipse cx="60" cy="60" rx="40" ry="40" fill="#00b3e6" fill-opacity="0.18"/>
+            <ellipse cx="60" cy="60" rx="18" ry="24" fill="#fff"/>
+            <ellipse cx="60" cy="60" rx="12" ry="16" fill="#00b3e6"/>
+            <rect x="50" y="90" width="20" height="8" rx="4" fill="#00b3e6"/>
+            <rect x="40" y="70" width="8" height="24" rx="4" fill="#00b3e6"/>
+            <rect x="72" y="70" width="8" height="24" rx="4" fill="#00b3e6"/>
+            <rect x="32" y="52" width="12" height="8" rx="4" fill="#00b3e6"/>
+            <rect x="76" y="52" width="12" height="8" rx="4" fill="#00b3e6"/>
+          </svg>`;
+        } else {
+          // Intermedio: híbrido
+          return `<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="60" rx="56" ry="56" fill="#232a34"/>
+            <ellipse cx="60" cy="60" rx="40" ry="40" fill="#ffd700" fill-opacity="0.13"/>
+            <ellipse cx="60" cy="60" rx="18" ry="24" fill="#fff"/>
+            <ellipse cx="60" cy="60" rx="12" ry="16" fill="#ffd700"/>
+            <rect x="44" y="80" width="32" height="12" rx="6" fill="#ffd700"/>
+            <rect x="36" y="52" width="12" height="12" rx="6" fill="#ffd700"/>
+            <rect x="72" y="52" width="12" height="12" rx="6" fill="#ffd700"/>
+          </svg>`;
+        }
+      }
+      function getMessage(val) {
+        if (val < 33) return '¡Potencia tu fuerza y supera tus límites!';
+        if (val > 66) return '¡Resistencia y constancia te llevan lejos!';
+        return '¡El equilibrio es la clave para tu mejor versión!';
+      }
+      function updateHybrid() {
+        const val = parseInt(slider.value, 10);
+        svgWrapper.innerHTML = getSVG(val);
+        message.textContent = getMessage(val);
+      }
+      slider.addEventListener('input', updateHybrid);
+      updateHybrid();
+    })();
+
+    // Animación de entrada para el slider interactivo
+    (function() {
+      const sliderContainer = document.querySelector('.hybrid-slider-container');
+      if (!sliderContainer) return;
+      function onEntry(entries, observer) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            sliderContainer.classList.add('visible');
+            observer.disconnect();
+          }
+        });
+      }
+      const observer = new IntersectionObserver(onEntry, { threshold: 0.3 });
+      observer.observe(sliderContainer);
+    })();
+
+    // Podcast Section
+    (function() {
+      const cards = document.querySelectorAll('.podcast-card');
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          card.classList.toggle('expanded');
+        });
+      });
+    })();
   </script>
 </body>
 </html>

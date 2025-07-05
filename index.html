@@ -88,8 +88,7 @@
       left: 0;
       right: 0;
       padding: 0.3rem 2rem;
-      background: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(20px);
+      background: #000000;
       border-bottom: 1px solid var(--color-border);
       z-index: 100;
       transform: translateY(-100%);
@@ -1102,6 +1101,20 @@
       background: #ffd700;
       box-shadow: 0 4px 24px #ffd70088;
     }
+
+    /* Efecto pulso para el botón 'Ver todos los planes' */
+    .btn-pulse {
+      animation: pulseGlow 1.3s infinite alternate;
+      box-shadow: 0 0 0 0 #ffd700, 0 0 12px 2px #e0b300;
+    }
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 0 0 #ffd700, 0 0 12px 2px #e0b300;
+      }
+      100% {
+        box-shadow: 0 0 0 8px #ffd70044, 0 0 24px 8px #e0b300cc;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1260,6 +1273,10 @@
         <button class="btn-plan" onclick="window.open('https://buy.stripe.com/dRm14m41RcAz4Ys9habwk02', '_blank')">Contratar ahora</button>
         <button class="btn-info" data-toggle="semester-info">Más información</button>
       </div>
+    </div>
+    <!-- Botón Ver todos los planes -->
+    <div style="display:flex;justify-content:center;margin-top:2.5rem;">
+      <button class="btn-primary" style="min-width:220px;font-size:1.1rem;">Ver todos los planes</button>
     </div>
   </section>
 
